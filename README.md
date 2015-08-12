@@ -1,8 +1,8 @@
 # simple-debugger
 
 ```js
-var debugEvents = require('../').debugEvents
-var debugMethods = require('../').debugMethods
+var debugEvents = require('simple-debugger').debugEvents
+var debugMethods = require('simple-debugger').debugMethods
 
 var EventEmitter = require('events')
 var inherits = require('util').inherits
@@ -30,8 +30,8 @@ new SomeClass()
 ```
 
 ```js
-var debugEvents = require('../').debugEvents
-var debugMethods = require('../').debugMethods
+var debugEvents = require('simple-debugger').debugEvents
+var debugMethods = require('simple-debugger').debugMethods
 
 var request = require('request')
 var google = request('https://google.com')
