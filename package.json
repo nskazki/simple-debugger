@@ -1,0 +1,26 @@
+{
+  "name": "simple-debugger",
+  "version": "1.0.0",
+  "description": "tool for debugging events, and methods of your classes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nskazki/simple-debugger.git"
+  },
+  "keywords": [
+    "debugger"
+  ],
+  "author": "nskazki@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nskazki/simple-debugger/issues"
+  },
+  "homepage": "https://github.com/nskazki/simple-debugger#readme",
+  "dependencies": {
+    "debug": "^2.2.0",
+    "lodash": "^3.10.1"
+  }
+}
