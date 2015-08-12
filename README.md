@@ -1,5 +1,9 @@
 # simple-debugger
 
+```
+npm i simple-debugger 
+```
+
 ```js
 var debugEvents = require('simple-debugger').debugEvents
 var debugMethods = require('simple-debugger').debugMethods
