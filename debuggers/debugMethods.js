@@ -3,23 +3,38 @@
 module.exports = debugMethods
 
 var smartToString = require('../tools/smartToString')
-var keysIn = require('lodash').keysIn
-var isUndefined = require('lodash').isUndefined
-var isFunction = require('lodash').isFunction
 var debug = require('debug')
 var format = require('util').format
-var toArray = require('lodash').toArray
+
+var lodash = require('extend-lodash')
+var isUndefined = lodash.isUndefined
+var isFunction = lodash.isFunction
+var keysIn = lodash.keysIn
+var toArray = lodash.toArray
+var concatArray = lodash.concatArray
+var unique = lodash.unique
+
+var blackList = concatArray(
+  Object.getOwnPropertyNames(Object),
+  Object.getOwnPropertyNames(Object.prototype))
 
 function debugMethods(object, _ignoreList, _objectName) {
 	var ignoreList = isUndefined(_ignoreList)
-		? []
-		: _ignoreList
+		? blackList
+		: unique(concatArray(_ignoreList, blackList))
 	var objectName = isUndefined(_objectName)
 		? object.constructor.name
 		: _objectName
 	var mDebug = debug(format('debugMethods:%s', objectName))
 
-	keysIn(object)
+	var methods = unique(concatArray(
+		keysIn(object),
+		Object.getOwnPropertyNames(object),
+		Object.getOwnPropertyNames(object.__proto__)
+	))
+
+	methods
+		.filter(function(name) { return !isGetterOrSetter(object, name) })
 		.filter(function(name) { return isFunction(object[name]) })
 		.filter(function(name) { return !~ignoreList.indexOf(name) })
 		.forEach(function(name) {
@@ -34,4 +49,12 @@ function debugMethods(object, _ignoreList, _objectName) {
 			}
 			object[name] = patchFunc
 		})
+}
+
+function isGetterOrSetter(object, name) {
+	var ownProps = Object.getOwnPropertyDescriptor(object, name) || {}
+	var protoProps = Object.getOwnPropertyDescriptor(object.__proto__, name) || {}
+
+	return isFunction(ownProps.get) || isFunction(ownProps.set)
+		|| isFunction(protoProps.get) || isFunction(protoProps.set)
 }
