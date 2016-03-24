@@ -1,6 +1,5 @@
 {
   "name": "simple-debugger",
-  "version": "1.0.3",
   "main": "dist/index.js",
   "homepage": "https://github.com/nskazki/simple-debugger",
   "authors": [
