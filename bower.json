@@ -1,6 +1,6 @@
 {
   "name": "simple-debugger",
-  "main": "dist/index.js",
+  "main": "dist/simple-debugger.js",
   "homepage": "https://github.com/nskazki/simple-debugger",
   "authors": [
     "nskazki <nskazki@gmail.com>"
