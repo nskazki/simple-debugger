@@ -20,7 +20,7 @@ function debugEvents(object, _ignoreList, _objectName) {
 	var eDebug = debug(format('debugEvents:%s', objectName))
 
 	object.emit = function(eventName) {
-		if (!~ignoreList.indexOf(eventName)) {
+		if (!~ignoreList.indexOf(eventName) && object === this) {
 			var args = toArray(arguments)
 				.slice(1)
 				.map(smartToString)

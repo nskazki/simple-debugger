@@ -40,11 +40,13 @@ function debugMethods(object, _ignoreList, _objectName) {
 		.forEach(function(name) {
 			var vanillaFunc = object[name]
 			var patchFunc = function() {
-				var args = toArray(arguments)
-					.map(smartToString)
-					.join(', ')
-				if (args.length) mDebug('#%s - %s', name, args)
-				else mDebug('#%s', name)
+				if (object === this) {
+ 					var args = toArray(arguments)
+						.map(smartToString)
+						.join(', ')
+					if (args.length) mDebug('#%s - %s', name, args)
+					else mDebug('#%s', name)
+				}
 				return vanillaFunc.apply(this, arguments)
 			}
 			object[name] = patchFunc

@@ -24,7 +24,7 @@ function debugNgEvents(object, _ignoreList, _objectName) {
 
   var vanillaEmit = object.$emit
   object.$emit = function(eventName) {
-    if (!~ignoreList.indexOf(eventName)) {
+    if (!~ignoreList.indexOf(eventName) && object === this) {
       var args = toArray(arguments)
         .slice(1)
         .map(smartToString)
@@ -37,7 +37,7 @@ function debugNgEvents(object, _ignoreList, _objectName) {
 
   var vanillaBroadcast = object.$broadcast
   object.$broadcast = function(eventName) {
-    if (!~ignoreList.indexOf(eventName)) {
+    if (!~ignoreList.indexOf(eventName) && object === this) {
       var args = toArray(arguments)
         .slice(1)
         .map(smartToString)
