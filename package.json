@@ -23,6 +23,7 @@
   "homepage": "https://github.com/nskazki/simple-debugger#readme",
   "dependencies": {
     "debug": "^2.2.0",
+    "extend-lodash": "^1.0.0",
     "lodash": "^4.6.1"
   }
 }
