@@ -159,7 +159,10 @@ exports.debugNgEvents = check('debugNgEvents')
     : require('lodash').noop
 
 function check(name) {
-  var namespaces = (process.env.DEBUG || '').split(/[\s,]+/);
+  var debug = typeof localStorage === 'object'
+    ? localStorage.debug
+    : process.env.DEBUG || ''
+  var namespaces = debug.split(/[\s,]+/);
   return namespaces.some(function(namespace) {
     var escapeNamespace = namespace.replace(/\*/g, '.*?')
     var regExp = new RegExp('^' + escapeNamespace + '$')
