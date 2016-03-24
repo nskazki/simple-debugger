@@ -21,7 +21,7 @@ function debugEvents(object, _ignoreList, _objectName) {
 	var eDebug = debug(format('debugEvents:%s', objectName))
 
 	object.emit = function(eventName) {
-		if (!~ignoreList.indexOf(eventName)) {
+		if (!~ignoreList.indexOf(eventName) && object === this) {
 			var args = toArray(arguments)
 				.slice(1)
 				.map(smartToString)
@@ -76,11 +76,13 @@ function debugMethods(object, _ignoreList, _objectName) {
 		.forEach(function(name) {
 			var vanillaFunc = object[name]
 			var patchFunc = function() {
-				var args = toArray(arguments)
-					.map(smartToString)
-					.join(', ')
-				if (args.length) mDebug('#%s - %s', name, args)
-				else mDebug('#%s', name)
+				if (object === this) {
+ 					var args = toArray(arguments)
+						.map(smartToString)
+						.join(', ')
+					if (args.length) mDebug('#%s - %s', name, args)
+					else mDebug('#%s', name)
+				}
 				return vanillaFunc.apply(this, arguments)
 			}
 			object[name] = patchFunc
@@ -122,7 +124,7 @@ function debugNgEvents(object, _ignoreList, _objectName) {
 
   var vanillaEmit = object.$emit
   object.$emit = function(eventName) {
-    if (!~ignoreList.indexOf(eventName)) {
+    if (!~ignoreList.indexOf(eventName) && object === this) {
       var args = toArray(arguments)
         .slice(1)
         .map(smartToString)
@@ -135,7 +137,7 @@ function debugNgEvents(object, _ignoreList, _objectName) {
 
   var vanillaBroadcast = object.$broadcast
   object.$broadcast = function(eventName) {
-    if (!~ignoreList.indexOf(eventName)) {
+    if (!~ignoreList.indexOf(eventName) && object === this) {
       var args = toArray(arguments)
         .slice(1)
         .map(smartToString)
