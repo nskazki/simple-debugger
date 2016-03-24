@@ -21,6 +21,6 @@
   "homepage": "https://github.com/nskazki/simple-debugger#readme",
   "dependencies": {
     "debug": "^2.2.0",
-    "lodash": "^3.10.1"
+    "lodash": "^4.6.1"
   }
 }
