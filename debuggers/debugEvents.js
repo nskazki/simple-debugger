@@ -28,6 +28,6 @@ function debugEvents(object, _ignoreList, _objectName) {
 			if (args) eDebug('!%s - %s', eventName, args)
 			else eDebug('!%s', eventName)
 		}
-		return vanillaEmit.apply(object, arguments)
+		return vanillaEmit.apply(this, arguments)
 	}
 }

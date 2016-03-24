@@ -32,7 +32,7 @@ function debugNgEvents(object, _ignoreList, _objectName) {
       if (args) eDebug('!%s - %s', eventName, args)
       else eDebug('!%s', eventName)
     }
-    return vanillaEmit.apply(object, arguments)
+    return vanillaEmit.apply(this, arguments)
   }
 
   var vanillaBroadcast = object.$broadcast
@@ -43,8 +43,8 @@ function debugNgEvents(object, _ignoreList, _objectName) {
         .map(smartToString)
         .join(', ')
       if (args) eDebug('$%s - %s', eventName, args)
-      else eDebug('$%s', eventName)
+      else eDebug('!!%s', eventName)
     }
-    return vanillaBroadcast.apply(object, arguments)
+    return vanillaBroadcast.apply(this, arguments)
   }
 }

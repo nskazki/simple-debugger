@@ -45,7 +45,7 @@ function debugMethods(object, _ignoreList, _objectName) {
 					.join(', ')
 				if (args.length) mDebug('#%s - %s', name, args)
 				else mDebug('#%s', name)
-				return vanillaFunc.apply(object, arguments)
+				return vanillaFunc.apply(this, arguments)
 			}
 			object[name] = patchFunc
 		})
