@@ -19,7 +19,7 @@
     "bower_components",
     "test-project",
     "tools",
-    "debuggers"
+    "debuggers",
     "index.js",
     "package.json"
   ]
