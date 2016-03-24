@@ -6,7 +6,7 @@
   "scripts": {
     "test": "DEBUG=debugEvents*,debugMethods* node ./test-project",
     "prebuild": "mkdir -p dist",
-    "build": "browserify index.js --s SimpleDebugger -o dist/index.js"
+    "build": "browserify index.js -s simpleDebugger -o dist/index.js"
   },
   "repository": {
     "type": "git",
