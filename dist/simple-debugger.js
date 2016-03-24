@@ -114,10 +114,10 @@ function debugNgEvents(object, _ignoreList, _objectName) {
     ? []
     : _ignoreList
   var scopeId = isNumber(object.$id)
-    ? object.$id
+    ? format('[%s]', object.$id)
     : ''
   var objectName = isUndefined(_objectName)
-    ? format('%s-%s', object.constructor.name, scopeId)
+    ? object.constructor.name + scopeId
     : _objectName
 
   var eDebug = debug(format('debugNgEvents:%s', objectName))
