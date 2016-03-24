@@ -8,6 +8,10 @@ exports.debugEvents = check('debugEvents')
     ? require('./debuggers/debugEvents')
     : require('lodash').noop
 
+exports.debugNgEvents = check('debugNgEvents')
+    ? require('./debuggers/debugNgEvents')
+    : require('lodash').noop
+
 function check(name) {
   var namespaces = (process.env.DEBUG || '').split(/[\s,]+/);
   return namespaces.some(function(namespace) {
