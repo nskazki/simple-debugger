@@ -33,7 +33,7 @@ function debugEvents(object, _ignoreList, _objectName) {
 	}
 }
 
-},{"../tools/smartToString":14,"debug":4,"lodash":9,"util":13}],2:[function(require,module,exports){
+},{"../tools/smartToString":15,"debug":5,"lodash":10,"util":14}],2:[function(require,module,exports){
 'use strict';
 
 module.exports = debugMethods
@@ -95,7 +95,54 @@ function isGetterOrSetter(object, name) {
 		|| isFunction(protoProps.get) || isFunction(protoProps.set)
 }
 
-},{"../tools/smartToString":14,"debug":4,"extend-lodash":6,"util":13}],3:[function(require,module,exports){
+},{"../tools/smartToString":15,"debug":5,"extend-lodash":7,"util":14}],3:[function(require,module,exports){
+'use strict';
+
+module.exports = debugNgEvents
+
+var smartToString = require('../tools/smartToString')
+var isUndefined = require('lodash').isUndefined
+var debug = require('debug')
+var format = require('util').format
+var toArray = require('lodash').toArray
+
+function debugNgEvents(object, _ignoreList, _objectName) {
+  var ignoreList = isUndefined(_ignoreList)
+    ? []
+    : _ignoreList
+  var objectName = isUndefined(_objectName)
+    ? object.constructor.name
+    : _objectName
+  var eDebug = debug(format('debugNgEvents:%s', objectName))
+
+  var vanillaEmit = object.$emit
+  object.$emit = function(eventName) {
+    if (!~ignoreList.indexOf(eventName)) {
+      var args = toArray(arguments)
+        .slice(1)
+        .map(smartToString)
+        .join(', ')
+      if (args) eDebug('!%s - %s', eventName, args)
+      else eDebug('!%s', eventName)
+    }
+    vanillaEmit.apply(object, arguments)
+  }
+
+  var vanillaBroadcast = object.$broadcast
+  object.$broadcast = function(eventName) {
+    if (!~ignoreList.indexOf(eventName)) {
+      var args = toArray(arguments)
+        .slice(1)
+        .map(smartToString)
+        .join(', ')
+      if (args) eDebug('$%s - %s', eventName, args)
+      else eDebug('$%s', eventName)
+    }
+    vanillaBroadcast.apply(object, arguments)
+  }
+}
+
+},{"../tools/smartToString":15,"debug":5,"lodash":10,"util":14}],4:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -105,6 +152,10 @@ exports.debugMethods = check('debugMethods')
 
 exports.debugEvents = check('debugEvents')
     ? require('./debuggers/debugEvents')
+    : require('lodash').noop
+
+exports.debugNgEvents = check('debugNgEvents')
+    ? require('./debuggers/debugNgEvents')
     : require('lodash').noop
 
 function check(name) {
@@ -117,7 +168,7 @@ function check(name) {
 }
 
 }).call(this,require('_process'))
-},{"./debuggers/debugEvents":1,"./debuggers/debugMethods":2,"_process":11,"lodash":9}],4:[function(require,module,exports){
+},{"./debuggers/debugEvents":1,"./debuggers/debugMethods":2,"./debuggers/debugNgEvents":3,"_process":12,"lodash":10}],5:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -287,7 +338,7 @@ function localstorage(){
   } catch (e) {}
 }
 
-},{"./debug":5}],5:[function(require,module,exports){
+},{"./debug":6}],6:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -486,7 +537,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":10}],6:[function(require,module,exports){
+},{"ms":11}],7:[function(require,module,exports){
 'use strict';
 
 var lodash = require('lodash').noConflict()
@@ -612,7 +663,7 @@ function strLength() {
     return spread(castToString)(args).length
 }
 
-},{"lodash":7,"util":13}],7:[function(require,module,exports){
+},{"lodash":8,"util":14}],8:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -12967,7 +13018,7 @@ function strLength() {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -12992,7 +13043,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -28069,7 +28120,7 @@ if (typeof Object.create === 'function') {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -28196,7 +28247,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -28289,14 +28340,14 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -28886,7 +28937,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":12,"_process":11,"inherits":8}],14:[function(require,module,exports){
+},{"./support/isBuffer":13,"_process":12,"inherits":9}],15:[function(require,module,exports){
 'use strict';
 
 module.exports = smartToString
@@ -28909,5 +28960,5 @@ function smartToString(object) {
     }
 }
 
-},{"lodash":9,"util":13}]},{},[3])(3)
+},{"lodash":10,"util":14}]},{},[4])(4)
 });
