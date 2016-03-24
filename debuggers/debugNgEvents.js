@@ -7,14 +7,19 @@ var isUndefined = require('lodash').isUndefined
 var debug = require('debug')
 var format = require('util').format
 var toArray = require('lodash').toArray
+var isNumber = require('lodash').isNumber
 
 function debugNgEvents(object, _ignoreList, _objectName) {
   var ignoreList = isUndefined(_ignoreList)
     ? []
     : _ignoreList
+  var scopeId = isNumber(object.$id)
+    ? object.$id
+    : ''
   var objectName = isUndefined(_objectName)
-    ? object.constructor.name
+    ? format('%s-%s', object.constructor.name, scopeId)
     : _objectName
+
   var eDebug = debug(format('debugNgEvents:%s', objectName))
 
   var vanillaEmit = object.$emit
