@@ -1,6 +1,6 @@
 {
   "name": "simple-debugger",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "tool for debugging events, and methods of your classes",
   "main": "index.js",
   "scripts": {
