@@ -4,7 +4,11 @@
   "description": "tool for debugging events, and methods of your classes",
   "main": "index.js",
   "scripts": {
-    "test": "DEBUG=debugEvents*,debugMethods* node ./test-project"
+    "test": "DEBUG=debugEvents*,debugMethods* node ./test-project",
+    "prebuild": "mkdir -p dist",
+    "build": "browserify index.js -d --s SimpleDebugger -o dist/index.js",
+    "prebower": "npm run build",
+    "bower": "bower publish"
   },
   "repository": {
     "type": "git",

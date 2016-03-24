@@ -1,0 +1,23 @@
+{
+  "name": "simple-debugger",
+  "main": "dist/index.js",
+  "homepage": "https://github.com/nskazki/simple-debugger",
+  "authors": [
+    "nskazki <nskazki@gmail.com>"
+  ],
+  "description": "debug events and methods - easy like taking candy from a baby",
+  "moduleType": [],
+  "keywords": [
+    "events",
+    "methods",
+    "debugger"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
