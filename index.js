@@ -12,6 +12,10 @@ exports.debugNgEvents = check('debugNgEvents')
     ? require('./debuggers/debugNgEvents')
     : require('lodash').noop
 
+exports.methods = exports.debugMethods
+exports.events = exports.debugEvents
+exports.ngEvents = exports.debugNgEvents
+
 function check(name) {
   var debug = typeof localStorage === 'object'
     ? localStorage.debug
