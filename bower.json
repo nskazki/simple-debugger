@@ -15,7 +15,13 @@
   ],
   "license": "MIT",
   "ignore": [
-    "*",
-    "!dist/**"
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test-project",
+    "tools",
+    "debuggers"
+    "index.js",
+    "package.json"
   ]
 }
