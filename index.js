@@ -18,7 +18,7 @@ exports.ngEvents = exports.debugNgEvents
 
 function check(name) {
   var debug = typeof localStorage === 'object'
-    ? localStorage.debug
+    ? localStorage.debug || ''
     : process.env.DEBUG || ''
   var namespaces = debug.split(/[\s,]+/);
   return namespaces.some(function(namespace) {
