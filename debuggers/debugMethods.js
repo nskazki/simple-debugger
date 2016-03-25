@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = debugMethods
 
@@ -20,54 +20,54 @@ var blackList = concatArray(
   Object.getOwnPropertyNames(Object.prototype))
 
 function debugMethods(object, _ignoreList, _objectName) {
-	var ignoreList = isUndefined(_ignoreList)
-		? blackList
-		: unique(concatArray(_ignoreList, blackList))
+  var ignoreList = isUndefined(_ignoreList)
+    ? blackList
+    : unique(concatArray(_ignoreList, blackList))
 
   var objectName = isUndefined(_objectName)
     ? genObjectName(object)
     : _objectName
 
-	var mDebug = debug(format('debugMethods:%s', objectName))
+  var mDebug = debug(format('debugMethods:%s', objectName))
 
-	var methods = unique(concatArray(
-		keysIn(object),
-		Object.getOwnPropertyNames(object),
-		Object.getOwnPropertyNames(object.__proto__)
-	))
+  var methods = unique(concatArray(
+    keysIn(object),
+    Object.getOwnPropertyNames(object),
+    Object.getOwnPropertyNames(object.__proto__)
+  ))
 
-	methods
-		.filter(function(name) { return !isGetterOrSetter(object, name) })
-		.filter(function(name) { return isFunction(object[name]) })
-		.filter(function(name) { return !~ignoreList.indexOf(name) })
-		.forEach(function(name) {
-			var vanillaFunc = object[name]
-			object[name] = function() {
-				var args = toArray(arguments)
-					.map(smartToString)
-					.join(', ')
+  methods
+    .filter(function(name) { return !isGetterOrSetter(object, name) })
+    .filter(function(name) { return isFunction(object[name]) })
+    .filter(function(name) { return !~ignoreList.indexOf(name) })
+    .forEach(function(name) {
+      var vanillaFunc = object[name]
+      object[name] = function() {
+        var args = toArray(arguments)
+          .map(smartToString)
+          .join(', ')
 
-		    var info = isString(args) && (args.length > 0)
-		      ? format('#%s - %s', name, args)
-		      : format('$%s', name)
+        var info = isString(args) && (args.length > 0)
+          ? format('#%s - %s', name, args)
+          : format('$%s', name)
 
-		    object === this
-		      ? mDebug(info)
-		      : mDebug('{ from %s } %s', genObjectName(this), info)
+        object === this
+          ? mDebug(info)
+          : mDebug('{ from %s } %s', genObjectName(this), info)
 
-				return vanillaFunc.apply(this, arguments)
-			}
-		})
+        return vanillaFunc.apply(this, arguments)
+      }
+    })
 }
 
 function isGetterOrSetter(object, name) {
-	var ownProps = Object.getOwnPropertyDescriptor(object, name) || {}
-	var protoProps = Object.getOwnPropertyDescriptor(object.__proto__, name) || {}
+  var ownProps = Object.getOwnPropertyDescriptor(object, name) || {}
+  var protoProps = Object.getOwnPropertyDescriptor(object.__proto__, name) || {}
 
-	return isFunction(ownProps.get) || isFunction(ownProps.set)
-		|| isFunction(protoProps.get) || isFunction(protoProps.set)
+  return isFunction(ownProps.get) || isFunction(ownProps.set)
+    || isFunction(protoProps.get) || isFunction(protoProps.set)
 }
 
 function genObjectName(object) {
-	return object.constructor.name
+  return object.constructor.name
 }

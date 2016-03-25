@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = smartToString
 
@@ -9,13 +9,13 @@ var isNull = require('lodash').isNull
 var inspect = require('util').inspect
 
 function smartToString(object) {
-    if (isUndefined(object) || isNull(object)) {
-        return '' + object
-    } else if (!isObject(object)) {
-        return object.toString()
-    } else if (object.constructor.name !== 'Object') {
-        return format('[%s]', object.constructor.name)
-    } else {
-        return inspect(object)
-    }
+  if (isUndefined(object) || isNull(object)) {
+    return '' + object
+  } else if (!isObject(object)) {
+    return object.toString()
+  } else if (object.constructor.name !== 'Object') {
+    return format('[%s]', object.constructor.name)
+  } else {
+    return inspect(object)
+  }
 }

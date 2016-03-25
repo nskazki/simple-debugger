@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 var debugEvents = require('../').debugEvents
 var debugMethods = require('../').debugMethods
@@ -6,12 +6,13 @@ var debugMethods = require('../').debugMethods
 var EventEmitter = require('events')
 var inherits = require('util').inherits
 var format = require('util').format
+var noop = require('lodash').noop
 
 // Worker
 inherits(Worker, EventEmitter)
 function Worker() {
-    debugEvents(this)
-    debugMethods(this, [ 'on', 'once', 'emit' ])
+  debugEvents(this)
+  debugMethods(this, [ 'on', 'once', 'emit' ])
 }
 
 Worker.prototype.attachProvider = function(provider) {
@@ -25,16 +26,16 @@ Worker.prototype.taskHandler = function(taskId, data) {
 // Provider
 inherits(Provider, EventEmitter)
 function Provider() {
-    debugEvents(this)
-    debugMethods(this, [ 'on', 'once', 'emit' ])
+  debugEvents(this)
+  debugMethods(this, [ 'on', 'once', 'emit' ])
 
-    this.taskQueue = [ 1 ]
+  this.taskQueue = [ 1 ]
 
-    this.taskQueue.forEach(function(task) {
-      setTimeout(function() {
-        this.emit('task', format('id-%s', task), task)
-      }.bind(this), 0)
-    }.bind(this))
+  this.taskQueue.forEach(function(task) {
+    setTimeout(function() {
+      this.emit('task', format('id-%s', task), task)
+    }.bind(this), 0)
+  }.bind(this))
 }
 
 Provider.prototype.attachWorker = function(worker) {
@@ -43,6 +44,7 @@ Provider.prototype.attachWorker = function(worker) {
 
 Provider.prototype.resultHandler = function(taskId, data) {
   // ...
+  noop(taskId, data)
 }
 
 // index

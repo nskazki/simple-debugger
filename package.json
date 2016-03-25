@@ -4,7 +4,9 @@
   "description": "tool for debugging events, and methods of your classes",
   "main": "index.js",
   "scripts": {
-    "test": "DEBUG=debugEvents*,debugMethods* node ./test-project",
+    "test-project": "DEBUG=debugEvents*,debugMethods* node ./test-project",
+    "eslint": "eslint $(find . -not -path '*/node_modules/*' -not -path '*/dist/*' -type f -name '*.js')",
+    "test": "npm run test-project && npm run eslint",
     "prebuild": "mkdir -p dist",
     "build": "browserify index.js -s simpleDebugger -o dist/simple-debugger.js"
   },
@@ -25,5 +27,8 @@
     "debug": "^2.2.0",
     "extend-lodash": "^1.0.0",
     "lodash": "^4.6.1"
+  },
+  "devDependencies": {
+    "eslint": "^2.4.0"
   }
 }

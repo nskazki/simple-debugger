@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = debugEvents
 
@@ -18,11 +18,11 @@ function debugEvents(object, _ignoreList, _objectName) {
     ? genObjectName(object)
     : _objectName
 
-	var eDebug = debug(format('debugEvents:%s', objectName))
+  var eDebug = debug(format('debugEvents:%s', objectName))
 
-	var vanillaEmit = object.emit
-	object.emit = function(eventName) {
-		if (ignoreList.indexOf(eventName) !== -1)
+  var vanillaEmit = object.emit
+  object.emit = function(eventName) {
+    if (ignoreList.indexOf(eventName) !== -1)
       return vanillaEmit.apply(this, arguments)
 
     var args = toArray(arguments)
@@ -38,9 +38,9 @@ function debugEvents(object, _ignoreList, _objectName) {
       : eDebug('{ from %s } %s', genObjectName(this), info)
 
     return vanillaEmit.apply(this, arguments)
-	}
+  }
 }
 
 function genObjectName(object) {
-	return object.constructor.name
+  return object.constructor.name
 }
