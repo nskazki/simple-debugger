@@ -1,5 +1,5 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.simpleDebugger = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-'use strict';
+'use strict'
 
 module.exports = debugEvents
 
@@ -8,33 +8,46 @@ var isUndefined = require('lodash').isUndefined
 var debug = require('debug')
 var format = require('util').format
 var toArray = require('lodash').toArray
+var isString = require('lodash').isString
 
 function debugEvents(object, _ignoreList, _objectName) {
-	var ignoreList = isUndefined(_ignoreList)
-		? []
-		: _ignoreList
-	var objectName = isUndefined(_objectName)
-		? object.constructor.name
-		: _objectName
+  var ignoreList = isUndefined(_ignoreList)
+    ? []
+    : _ignoreList
 
-	var vanillaEmit = object.emit
-	var eDebug = debug(format('debugEvents:%s', objectName))
+  var objectName = isUndefined(_objectName)
+    ? genObjectName(object)
+    : _objectName
 
-	object.emit = function(eventName) {
-		if (!~ignoreList.indexOf(eventName) && object === this) {
-			var args = toArray(arguments)
-				.slice(1)
-				.map(smartToString)
-				.join(', ')
-			if (args) eDebug('!%s - %s', eventName, args)
-			else eDebug('!%s', eventName)
-		}
-		return vanillaEmit.apply(this, arguments)
-	}
+  var eDebug = debug(format('debugEvents:%s', objectName))
+
+  var vanillaEmit = object.emit
+  object.emit = function(eventName) {
+    if (ignoreList.indexOf(eventName) !== -1)
+      return vanillaEmit.apply(this, arguments)
+
+    var args = toArray(arguments)
+        .slice(1)
+        .map(smartToString)
+        .join(', ')
+    var info = isString(args) && (args.length > 0)
+      ? format('!%s - %s', eventName, args)
+      : format('!%s', eventName)
+
+    object === this
+      ? eDebug(info)
+      : eDebug('{ from %s } %s', genObjectName(this), info)
+
+    return vanillaEmit.apply(this, arguments)
+  }
+}
+
+function genObjectName(object) {
+  return object.constructor.name
 }
 
 },{"../tools/smartToString":15,"debug":5,"lodash":10,"util":14}],2:[function(require,module,exports){
-'use strict';
+'use strict'
 
 module.exports = debugMethods
 
@@ -47,6 +60,7 @@ var isUndefined = lodash.isUndefined
 var isFunction = lodash.isFunction
 var keysIn = lodash.keysIn
 var toArray = lodash.toArray
+var isString = lodash.isString
 var concatArray = lodash.concatArray
 var unique = lodash.unique
 
@@ -55,50 +69,60 @@ var blackList = concatArray(
   Object.getOwnPropertyNames(Object.prototype))
 
 function debugMethods(object, _ignoreList, _objectName) {
-	var ignoreList = isUndefined(_ignoreList)
-		? blackList
-		: unique(concatArray(_ignoreList, blackList))
-	var objectName = isUndefined(_objectName)
-		? object.constructor.name
-		: _objectName
-	var mDebug = debug(format('debugMethods:%s', objectName))
+  var ignoreList = isUndefined(_ignoreList)
+    ? blackList
+    : unique(concatArray(_ignoreList, blackList))
 
-	var methods = unique(concatArray(
-		keysIn(object),
-		Object.getOwnPropertyNames(object),
-		Object.getOwnPropertyNames(object.__proto__)
-	))
+  var objectName = isUndefined(_objectName)
+    ? genObjectName(object)
+    : _objectName
 
-	methods
-		.filter(function(name) { return !isGetterOrSetter(object, name) })
-		.filter(function(name) { return isFunction(object[name]) })
-		.filter(function(name) { return !~ignoreList.indexOf(name) })
-		.forEach(function(name) {
-			var vanillaFunc = object[name]
-			var patchFunc = function() {
-				if (object === this) {
- 					var args = toArray(arguments)
-						.map(smartToString)
-						.join(', ')
-					if (args.length) mDebug('#%s - %s', name, args)
-					else mDebug('#%s', name)
-				}
-				return vanillaFunc.apply(this, arguments)
-			}
-			object[name] = patchFunc
-		})
+  var mDebug = debug(format('debugMethods:%s', objectName))
+
+  var methods = unique(concatArray(
+    keysIn(object),
+    Object.getOwnPropertyNames(object),
+    Object.getOwnPropertyNames(object.__proto__)
+  ))
+
+  methods
+    .filter(function(name) { return !isGetterOrSetter(object, name) })
+    .filter(function(name) { return isFunction(object[name]) })
+    .filter(function(name) { return !~ignoreList.indexOf(name) })
+    .forEach(function(name) {
+      var vanillaFunc = object[name]
+      object[name] = function() {
+        var args = toArray(arguments)
+          .map(smartToString)
+          .join(', ')
+
+        var info = isString(args) && (args.length > 0)
+          ? format('#%s - %s', name, args)
+          : format('$%s', name)
+
+        object === this
+          ? mDebug(info)
+          : mDebug('{ from %s } %s', genObjectName(this), info)
+
+        return vanillaFunc.apply(this, arguments)
+      }
+    })
 }
 
 function isGetterOrSetter(object, name) {
-	var ownProps = Object.getOwnPropertyDescriptor(object, name) || {}
-	var protoProps = Object.getOwnPropertyDescriptor(object.__proto__, name) || {}
+  var ownProps = Object.getOwnPropertyDescriptor(object, name) || {}
+  var protoProps = Object.getOwnPropertyDescriptor(object.__proto__, name) || {}
 
-	return isFunction(ownProps.get) || isFunction(ownProps.set)
-		|| isFunction(protoProps.get) || isFunction(protoProps.set)
+  return isFunction(ownProps.get) || isFunction(ownProps.set)
+    || isFunction(protoProps.get) || isFunction(protoProps.set)
+}
+
+function genObjectName(object) {
+  return object.constructor.name
 }
 
 },{"../tools/smartToString":15,"debug":5,"extend-lodash":7,"util":14}],3:[function(require,module,exports){
-'use strict';
+'use strict'
 
 module.exports = debugNgEvents
 
@@ -108,62 +132,82 @@ var debug = require('debug')
 var format = require('util').format
 var toArray = require('lodash').toArray
 var isNumber = require('lodash').isNumber
+var isString = require('lodash').isString
 
 function debugNgEvents(object, _ignoreList, _objectName) {
   var ignoreList = isUndefined(_ignoreList)
     ? []
     : _ignoreList
-  var scopeId = isNumber(object.$id)
-    ? format('[%s]', object.$id)
-    : ''
+
   var objectName = isUndefined(_objectName)
-    ? object.constructor.name + scopeId
+    ? genObjectName(object)
     : _objectName
 
   var eDebug = debug(format('debugNgEvents:%s', objectName))
 
   var vanillaEmit = object.$emit
   object.$emit = function(eventName) {
-    if (!~ignoreList.indexOf(eventName) && object === this) {
-      var args = toArray(arguments)
+    if (ignoreList.indexOf(eventName) !== -1)
+      return vanillaEmit.apply(this, arguments)
+
+    var args = toArray(arguments)
         .slice(1)
         .map(smartToString)
         .join(', ')
-      if (args) eDebug('!%s - %s', eventName, args)
-      else eDebug('!%s', eventName)
-    }
+    var info = isString(args) && (args.length > 0)
+      ? format('!%s - %s', eventName, args)
+      : format('!%s', eventName)
+
+    object === this
+      ? eDebug(info)
+      : eDebug('{ from %s } %s', genObjectName(this), info)
+
     return vanillaEmit.apply(this, arguments)
   }
 
   var vanillaBroadcast = object.$broadcast
   object.$broadcast = function(eventName) {
-    if (!~ignoreList.indexOf(eventName) && object === this) {
-      var args = toArray(arguments)
+    if (ignoreList.indexOf(eventName) !== -1)
+      return vanillaBroadcast.apply(this, arguments)
+
+    var args = toArray(arguments)
         .slice(1)
         .map(smartToString)
         .join(', ')
-      if (args) eDebug('$%s - %s', eventName, args)
-      else eDebug('!!%s', eventName)
-    }
+    var info = isString(args) && (args.length > 0)
+      ? format('!!%s - %s', eventName, args)
+      : format('!!%s', eventName)
+
+    object === this
+      ? eDebug(info)
+      : eDebug('{ from %s } %s', genObjectName(this), info)
+
     return vanillaBroadcast.apply(this, arguments)
   }
 }
 
+function genObjectName(object) {
+  var scopeId = isNumber(object.$id)
+    ? format('[%s]', object.$id)
+    : ''
+  return object.constructor.name + scopeId
+}
+
 },{"../tools/smartToString":15,"debug":5,"lodash":10,"util":14}],4:[function(require,module,exports){
 (function (process){
-'use strict';
+'use strict'
 
 exports.debugMethods = check('debugMethods')
-    ? require('./debuggers/debugMethods')
-    : require('lodash').noop
+  ? require('./debuggers/debugMethods')
+  : require('lodash').noop
 
 exports.debugEvents = check('debugEvents')
-    ? require('./debuggers/debugEvents')
-    : require('lodash').noop
+  ? require('./debuggers/debugEvents')
+  : require('lodash').noop
 
 exports.debugNgEvents = check('debugNgEvents')
-    ? require('./debuggers/debugNgEvents')
-    : require('lodash').noop
+  ? require('./debuggers/debugNgEvents')
+  : require('lodash').noop
 
 exports.methods = exports.debugMethods
 exports.events = exports.debugEvents
@@ -173,7 +217,7 @@ function check(name) {
   var debug = typeof localStorage === 'object'
     ? localStorage.debug || ''
     : process.env.DEBUG || ''
-  var namespaces = debug.split(/[\s,]+/);
+  var namespaces = debug.split(/[\s,]+/)
   return namespaces.some(function(namespace) {
     var escapeNamespace = namespace.replace(/\*/g, '.*?')
     var regExp = new RegExp('^' + escapeNamespace + '$')
@@ -28952,7 +28996,7 @@ function hasOwnProperty(obj, prop) {
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./support/isBuffer":13,"_process":12,"inherits":9}],15:[function(require,module,exports){
-'use strict';
+'use strict'
 
 module.exports = smartToString
 
@@ -28963,15 +29007,15 @@ var isNull = require('lodash').isNull
 var inspect = require('util').inspect
 
 function smartToString(object) {
-    if (isUndefined(object) || isNull(object)) {
-        return '' + object
-    } else if (!isObject(object)) {
-        return object.toString()
-    } else if (object.constructor.name !== 'Object') {
-        return format('[%s]', object.constructor.name)
-    } else {
-        return inspect(object)
-    }
+  if (isUndefined(object) || isNull(object)) {
+    return '' + object
+  } else if (!isObject(object)) {
+    return object.toString()
+  } else if (object.constructor.name !== 'Object') {
+    return format('[%s]', object.constructor.name)
+  } else {
+    return inspect(object)
+  }
 }
 
 },{"lodash":10,"util":14}]},{},[4])(4)
