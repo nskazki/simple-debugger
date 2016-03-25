@@ -11,6 +11,7 @@ var isUndefined = lodash.isUndefined
 var isFunction = lodash.isFunction
 var keysIn = lodash.keysIn
 var toArray = lodash.toArray
+var isString = lodash.isString
 var concatArray = lodash.concatArray
 var unique = lodash.unique
 
@@ -22,9 +23,11 @@ function debugMethods(object, _ignoreList, _objectName) {
 	var ignoreList = isUndefined(_ignoreList)
 		? blackList
 		: unique(concatArray(_ignoreList, blackList))
-	var objectName = isUndefined(_objectName)
-		? object.constructor.name
-		: _objectName
+
+  var objectName = isUndefined(_objectName)
+    ? genObjectName(object)
+    : _objectName
+
 	var mDebug = debug(format('debugMethods:%s', objectName))
 
 	var methods = unique(concatArray(
@@ -39,17 +42,21 @@ function debugMethods(object, _ignoreList, _objectName) {
 		.filter(function(name) { return !~ignoreList.indexOf(name) })
 		.forEach(function(name) {
 			var vanillaFunc = object[name]
-			var patchFunc = function() {
-				if (object === this) {
- 					var args = toArray(arguments)
-						.map(smartToString)
-						.join(', ')
-					if (args.length) mDebug('#%s - %s', name, args)
-					else mDebug('#%s', name)
-				}
+			object[name] = function() {
+				var args = toArray(arguments)
+					.map(smartToString)
+					.join(', ')
+
+		    var info = isString(args) && (args.length > 0)
+		      ? format('#%s - %s', name, args)
+		      : format('$%s', name)
+
+		    object === this
+		      ? mDebug(info)
+		      : mDebug('{ from %s } %s', genObjectName(this), info)
+
 				return vanillaFunc.apply(this, arguments)
 			}
-			object[name] = patchFunc
 		})
 }
 
@@ -59,4 +66,8 @@ function isGetterOrSetter(object, name) {
 
 	return isFunction(ownProps.get) || isFunction(ownProps.set)
 		|| isFunction(protoProps.get) || isFunction(protoProps.set)
+}
+
+function genObjectName(object) {
+	return object.constructor.name
 }
