@@ -26,9 +26,9 @@ function debugEvents(object, _ignoreList, _objectName) {
       return vanillaEmit.apply(this, arguments)
 
     var args = toArray(arguments)
-        .slice(1)
-        .map(smartToString)
-        .join(', ')
+      .slice(1)
+      .map(smartToString)
+      .join(', ')
     var info = isString(args) && (args.length > 0)
       ? format('!%s - %s', eventName, args)
       : format('!%s', eventName)
