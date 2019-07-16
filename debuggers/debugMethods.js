@@ -6,23 +6,23 @@ var smartToString = require('../tools/smartToString')
 var debug = require('debug')
 var format = require('util').format
 
-var lodash = require('extend-lodash')
+var lodash = require('lodash')
 var isUndefined = lodash.isUndefined
 var isFunction = lodash.isFunction
 var keysIn = lodash.keysIn
 var toArray = lodash.toArray
 var isString = lodash.isString
-var concatArray = lodash.concatArray
-var unique = lodash.unique
+var concat = lodash.concat
+var uniq = lodash.uniq
 
-var blackList = concatArray(
+var blackList = concat(
   Object.getOwnPropertyNames(Object),
   Object.getOwnPropertyNames(Object.prototype))
 
 function debugMethods(object, _ignoreList, _objectName) {
   var ignoreList = isUndefined(_ignoreList)
     ? blackList
-    : unique(concatArray(_ignoreList, blackList))
+    : uniq(concat(_ignoreList, blackList))
 
   var objectName = isUndefined(_objectName)
     ? genObjectName(object)
@@ -30,7 +30,7 @@ function debugMethods(object, _ignoreList, _objectName) {
 
   var mDebug = debug(format('debugMethods:%s', objectName))
 
-  var methods = unique(concatArray(
+  var methods = uniq(concat(
     keysIn(object),
     Object.getOwnPropertyNames(object),
     Object.getOwnPropertyNames(object.__proto__)
