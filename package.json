@@ -25,10 +25,10 @@
   "homepage": "https://github.com/nskazki/simple-debugger#readme",
   "dependencies": {
     "debug": "^4.1.1",
-    "lodash": "^4.17.14"
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "browserify": "^16.3.0",
-    "eslint": "^6.0.1"
+    "browserify": "^16.5.0",
+    "eslint": "^6.5.1"
   }
 }
