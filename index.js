@@ -10,10 +10,10 @@ exports.debugEvents = check('debugEvents') ? debugEvents : noop
 exports.debugMethods = check('debugMethods') ? debugMethods  : noop
 
 function check(name) {
-  var namespaces = trim(process.env.DEBUG).split(/[\s,]+/)
-  return namespaces.some(function(namespace) {
-    var escapeNamespace = namespace.replace(/\*/g, '.*?')
-    var regExp = new RegExp('^' + escapeNamespace + '$')
+  const namespaces = trim(process.env.DEBUG).split(/[\s,]+/)
+  return namespaces.some((namespace) => {
+    const escapeNamespace = namespace.replace(/\*/g, '.*?')
+    const regExp = new RegExp('^' + escapeNamespace + '$')
     return regExp.test(name)
   })
 }

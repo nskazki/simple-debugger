@@ -17,13 +17,14 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "eslint": "eslint $(find . -not -path '*/node_modules/*' -not -path '*/dist/*' -type f -name '*.js')"
+    "eslint": "eslint ."
   },
   "dependencies": {
     "debug": "^4.1.1",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
+    "babel-eslint": "^10.0.3",
     "eslint": "^6.5.1"
   }
 }
