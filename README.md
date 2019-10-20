@@ -1,45 +1,56 @@
-# simple-debugger
+# SimpleDebugger
+
+A simple way to debug events and methods of your classes.
 
 ```
-npm i simple-debugger 
+yarn add simple-debugger
 ```
 
 ```js
-var debugEvents = require('simple-debugger').debugEvents
-var debugMethods = require('simple-debugger').debugMethods
+const { inherits } = require('util')
+const { debugEvents } = require('simple-debugger')
+const { debugMethods } = require('simple-debugger')
 
-var EventEmitter = require('events')
-var inherits = require('util').inherits
+const EventEmitter = require('events')
 
 inherits(SomeClass, EventEmitter)
 function SomeClass() {
-    debugEvents(this)
-    debugMethods(this, [ 'on', 'once', 'emit' ])
-    this.init()
+  debugEvents(this)
+  debugMethods(this, [ 'on', 'once', 'emit' ])
+  this.init()
 }
 
 SomeClass.prototype.init = function() {
-    //...
-    this.emit('inited')
+  //...
+  this.emit('ready')
 }
 
 new SomeClass()
 
-/*
-    $ DEBUG=* node .
-      debugMethods:SomeClass #init +0ms
-      debugEvents:SomeClass !inited +2ms
+/* $ DEBUG=debugEvents*,debugMethods* node .
+   debugMethods:SomeClass #init +0ms
+   debugEvents:SomeClass !inited +2ms
 */
 
 ```
 
 ```js
-var debugEvents = require('simple-debugger').debugEvents
-var debugMethods = require('simple-debugger').debugMethods
+const { debugEvents } = require('simple-debugger')
+const { debugMethods } = require('simple-debugger')
 
-var request = require('request')
-var google = request('https://google.com')
+const request = require('request')
+const google = request('https://google.com')
 
 debugEvents(google, [], 'google')
 debugMethods(google, [ 'on', 'once', 'emit' ], 'google')
+
+/* $ DEBUG=debugEvents*,debugMethods* node .
+   debugMethods:google $end +0ms
+   debugMethods:google $start +0ms
+   debugEvents:google !request - [ClientRequest] +0ms
+   debugEvents:google !socket - [TLSSocket] +1ms
+   debugMethods:google #onRequestResponse - [IncomingMessage] +349ms
+   debugMethods:google #getHeader - host +1ms
+   ...
+*/
 ```
