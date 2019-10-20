@@ -1,26 +1,16 @@
 'use strict'
 
-exports.debugMethods = check('debugMethods')
-  ? require('./debuggers/debugMethods')
-  : require('lodash').noop
+const { noop } = require('lodash')
+const { trim } = require('lodash')
 
-exports.debugEvents = check('debugEvents')
-  ? require('./debuggers/debugEvents')
-  : require('lodash').noop
+const debugEvents = require('./lib/debug-events')
+const debugMethods = require('./lib/debug-methods')
 
-exports.debugNgEvents = check('debugNgEvents')
-  ? require('./debuggers/debugNgEvents')
-  : require('lodash').noop
-
-exports.methods = exports.debugMethods
-exports.events = exports.debugEvents
-exports.ngEvents = exports.debugNgEvents
+exports.debugEvents = check('debugEvents') ? debugEvents : noop
+exports.debugMethods = check('debugMethods') ? debugMethods  : noop
 
 function check(name) {
-  var debug = typeof localStorage === 'object'
-    ? localStorage.debug || ''
-    : process.env.DEBUG || ''
-  var namespaces = debug.split(/[\s,]+/)
+  var namespaces = trim(process.env.DEBUG).split(/[\s,]+/)
   return namespaces.some(function(namespace) {
     var escapeNamespace = namespace.replace(/\*/g, '.*?')
     var regExp = new RegExp('^' + escapeNamespace + '$')
