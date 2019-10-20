@@ -1,8 +1,20 @@
 {
   "name": "simple-debugger",
+  "author": "nskazki@gmail.com",
+  "license": "MIT",
   "version": "2.0.1",
-  "description": "tool for debugging events, and methods of your classes",
-  "main": "index.js",
+  "description": "A simple way to debug events and methods of your classes",
+  "homepage": "https://github.com/nskazki/simple-debugger",
+  "keywords": [
+    "debugger"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nskazki/simple-debugger.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nskazki/simple-debugger/issues"
+  },
   "scripts": {
     "test-project": "DEBUG=debugEvents*,debugMethods* node ./test-project",
     "eslint": "eslint $(find . -not -path '*/node_modules/*' -not -path '*/dist/*' -type f -name '*.js')",
@@ -10,19 +22,6 @@
     "prebuild": "mkdir -p dist",
     "build": "browserify index.js -s simpleDebugger -o dist/simple-debugger.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nskazki/simple-debugger.git"
-  },
-  "keywords": [
-    "debugger"
-  ],
-  "author": "nskazki@gmail.com",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/nskazki/simple-debugger/issues"
-  },
-  "homepage": "https://github.com/nskazki/simple-debugger#readme",
   "dependencies": {
     "debug": "^4.1.1",
     "lodash": "^4.17.15"
