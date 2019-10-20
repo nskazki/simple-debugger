@@ -1,12 +1,15 @@
+// DEBUG=* node example/
+
 'use strict'
 
-var debugEvents = require('../').debugEvents
-var debugMethods = require('../').debugMethods
+var { noop } = require('lodash')
+var { format } = require('util')
+var { inherits } = require('util')
 
 var EventEmitter = require('events')
-var inherits = require('util').inherits
-var format = require('util').format
-var noop = require('lodash').noop
+
+var { debugEvents } = require('../')
+var { debugMethods } = require('../')
 
 // Worker
 inherits(Worker, EventEmitter)
