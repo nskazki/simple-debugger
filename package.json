@@ -18,16 +18,13 @@
   "scripts": {
     "test-project": "DEBUG=debugEvents*,debugMethods* node ./test-project",
     "eslint": "eslint $(find . -not -path '*/node_modules/*' -not -path '*/dist/*' -type f -name '*.js')",
-    "test": "npm run test-project && npm run eslint",
-    "prebuild": "mkdir -p dist",
-    "build": "browserify index.js -s simpleDebugger -o dist/simple-debugger.js"
+    "test": "npm run test-project && npm run eslint"
   },
   "dependencies": {
     "debug": "^4.1.1",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "browserify": "^16.5.0",
     "eslint": "^6.5.1"
   }
 }
